@@ -1,0 +1,17 @@
+# .env files contain secrets — never commit them
+.env
+
+# Generated JSON data files
+task2/quotes.json
+task2/authors.json
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
