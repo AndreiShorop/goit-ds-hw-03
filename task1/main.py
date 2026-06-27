@@ -1,7 +1,3 @@
-"""
-Task 1 — MongoDB CRUD operations using PyMongo.
-Manages a collection of cats with fields: name, age, features.
-"""
 
 import os
 
@@ -20,12 +16,7 @@ db = client[DB_NAME]
 collection = db[COLLECTION_NAME]
 
 
-# ---------------------------------------------------------------------------
-# Seed helpers
-# ---------------------------------------------------------------------------
-
 def seed_data() -> None:
-    """Insert sample cat documents if the collection is empty."""
     if collection.count_documents({}) == 0:
         sample_cats = [
             {
@@ -48,12 +39,7 @@ def seed_data() -> None:
         print("Sample data inserted into the collection.")
 
 
-# ---------------------------------------------------------------------------
-# Read operations
-# ---------------------------------------------------------------------------
-
 def get_all_cats() -> None:
-    """Print every document in the cats collection."""
     try:
         cats = list(collection.find())
         if not cats:
@@ -66,7 +52,6 @@ def get_all_cats() -> None:
 
 
 def get_cat_by_name(name: str) -> None:
-    """Print the document for a cat with the given name."""
     try:
         cat = collection.find_one({"name": name})
         if cat:
@@ -77,12 +62,8 @@ def get_cat_by_name(name: str) -> None:
         print(f"[Error] Could not find cat: {e}")
 
 
-# ---------------------------------------------------------------------------
-# Update operations
-# ---------------------------------------------------------------------------
 
 def update_cat_age(name: str, new_age: int) -> None:
-    """Update the age field of a cat identified by name."""
     try:
         result = collection.update_one({"name": name}, {"$set": {"age": new_age}})
         if result.matched_count:
@@ -94,7 +75,6 @@ def update_cat_age(name: str, new_age: int) -> None:
 
 
 def add_cat_feature(name: str, feature: str) -> None:
-    """Append a new feature to the features list of a cat identified by name."""
     try:
         result = collection.update_one(
             {"name": name}, {"$push": {"features": feature}}
@@ -107,12 +87,8 @@ def add_cat_feature(name: str, feature: str) -> None:
         print(f"[Error] Could not add feature: {e}")
 
 
-# ---------------------------------------------------------------------------
-# Delete operations
-# ---------------------------------------------------------------------------
 
 def delete_cat_by_name(name: str) -> None:
-    """Remove a single cat document identified by name."""
     try:
         result = collection.delete_one({"name": name})
         if result.deleted_count:
@@ -124,7 +100,6 @@ def delete_cat_by_name(name: str) -> None:
 
 
 def delete_all_cats() -> None:
-    """Remove all documents from the cats collection."""
     try:
         result = collection.delete_many({})
         print(f"Deleted {result.deleted_count} document(s) from the collection.")
@@ -132,12 +107,9 @@ def delete_all_cats() -> None:
         print(f"[Error] Could not delete all cats: {e}")
 
 
-# ---------------------------------------------------------------------------
-# Interactive menu
-# ---------------------------------------------------------------------------
+
 
 def main() -> None:
-    """Entry point — interactive CLI menu for CRUD operations."""
     seed_data()
 
     menu = (

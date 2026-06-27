@@ -1,10 +1,3 @@
-"""
-Task 2 — Scrape all quotes and author details from quotes.toscrape.com.
-Outputs:
-  task2/quotes.json  — list of quote objects
-  task2/authors.json — list of unique author objects
-"""
-
 import json
 from pathlib import Path
 
@@ -15,21 +8,7 @@ BASE_URL = "http://quotes.toscrape.com"
 OUTPUT_DIR = Path(__file__).parent
 
 
-# ---------------------------------------------------------------------------
-# Author scraper
-# ---------------------------------------------------------------------------
-
 def scrape_author(author_path: str) -> dict | None:
-    """
-    Fetch and parse the author detail page.
-
-    Args:
-        author_path: Relative URL path to the author page (e.g. '/author/einstein/').
-
-    Returns:
-        Dictionary with fullname, born_date, born_location, description,
-        or None if the request fails.
-    """
     url = BASE_URL + author_path
     try:
         response = requests.get(url, timeout=10)
@@ -57,19 +36,9 @@ def scrape_author(author_path: str) -> dict | None:
     }
 
 
-# ---------------------------------------------------------------------------
-# Main scraper
-# ---------------------------------------------------------------------------
-
 def scrape_all() -> tuple[list[dict], list[dict]]:
-    """
-    Iterate over all paginated pages and collect quotes and authors.
-
-    Returns:
-        Tuple (quotes, authors) where each is a list of dicts.
-    """
     quotes: list[dict] = []
-    authors: dict[str, dict] = {}  # keyed by author name to avoid duplicates
+    authors: dict[str, dict] = {}
 
     page = 1
     while True:
@@ -110,13 +79,11 @@ def scrape_all() -> tuple[list[dict], list[dict]]:
                 }
             )
 
-            # Fetch author details only once per unique author
             if author_name not in authors:
                 author_data = scrape_author(author_link_tag["href"])
                 if author_data:
                     authors[author_name] = author_data
 
-        # Follow pagination
         next_li = soup.find("li", class_="next")
         if not next_li:
             break
@@ -124,10 +91,6 @@ def scrape_all() -> tuple[list[dict], list[dict]]:
 
     return quotes, list(authors.values())
 
-
-# ---------------------------------------------------------------------------
-# Entry point
-# ---------------------------------------------------------------------------
 
 def main() -> None:
     quotes, authors = scrape_all()

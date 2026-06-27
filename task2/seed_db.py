@@ -1,14 +1,3 @@
-"""
-Task 2 — Import scraped JSON data into MongoDB Atlas.
-Reads quotes.json and authors.json from the same directory and populates
-the 'quotes_db' database with 'quotes' and 'authors' collections.
-
-Usage:
-    1. Ensure .env contains MONGO_URI pointing to your Atlas cluster.
-    2. Run task2/scraper.py first to generate the JSON files.
-    3. python task2/seed_db.py
-"""
-
 import json
 import os
 from pathlib import Path
@@ -24,24 +13,7 @@ DB_NAME = "quotes_db"
 DATA_DIR = Path(__file__).parent
 
 
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-
 def load_json(filepath: Path) -> list[dict]:
-    """
-    Load a JSON array from a file.
-
-    Args:
-        filepath: Path to the JSON file.
-
-    Returns:
-        Parsed list of dictionaries.
-
-    Raises:
-        FileNotFoundError: If the file does not exist.
-        ValueError: If the file does not contain a JSON array.
-    """
     if not filepath.exists():
         raise FileNotFoundError(
             f"Required file not found: {filepath}\n"
@@ -55,14 +27,6 @@ def load_json(filepath: Path) -> list[dict]:
 
 
 def seed_collection(db, collection_name: str, data: list[dict]) -> None:
-    """
-    Drop the existing collection and insert all documents.
-
-    Args:
-        db: PyMongo database instance.
-        collection_name: Target collection name.
-        data: List of documents to insert.
-    """
     try:
         col = db[collection_name]
         col.drop()
@@ -73,10 +37,6 @@ def seed_collection(db, collection_name: str, data: list[dict]) -> None:
     except PyMongoError as e:
         print(f"[Error] Failed to seed '{collection_name}': {e}")
 
-
-# ---------------------------------------------------------------------------
-# Entry point
-# ---------------------------------------------------------------------------
 
 def main() -> None:
     if not MONGO_URI:
@@ -95,7 +55,6 @@ def main() -> None:
 
     try:
         client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
-        # Trigger connection check
         client.admin.command("ping")
         print("Connected to MongoDB Atlas successfully.")
     except PyMongoError as e:
